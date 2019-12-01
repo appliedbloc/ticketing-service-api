@@ -8,7 +8,7 @@ Flask RestPlus powered ticketing service API to manage tickets, associated clien
 * Clone the repository to you local working directory of choice:
 ```git clone https://github.com/appliedbloc/ticketing-service-api.git```
 * Create a new virtual environment in the ```venv``` directory: 
-    * ```virtualenv -p `which python 3` venv```
+    * ```virtualenv -p `which python3` venv```
     * ```source venv/bin/activate```
     * ```(venv) $ pip install -r requirements.txt```
 
