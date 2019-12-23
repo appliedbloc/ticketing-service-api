@@ -19,5 +19,5 @@ setup(
 
     packages=find_packages(),
 
-    install_requires=['flask-restplus==0.13.0', 'Flask-SQLAlchemy==2.4.1', 'pytest', 'sqlalchemy'],
+    install_requires=['flask-restplus==0.13.0', 'Flask-SQLAlchemy==2.4.1', 'pytest', 'sqlalchemy','psycopg2'],
 )
