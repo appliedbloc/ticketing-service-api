@@ -5,22 +5,68 @@ from ticketing_service.database import db
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
-    ticket = db.relationship('Ticket', backref=db.backref('clients', lazy='dynamic'))
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
+    order = db.relationship('Order', backref=db.backref('clients', lazy='dynamic'))
 
     client_name = db.Column(db.String(50))
     address = db.Column(db.Text())
     client_type = db.Column(db.String(50))
 
-    def __init__(self, client_name, address, client_type, ticket, ticket_id):
+    def __init__(self, client_name, address, client_type, order, order_id):
         self.client_name = client_name
         self.address = address
         self.client_type = client_type
+        self.order_id = order_id
+        self.order = order
+
+    def __repr__(self):
+        return '<Client %r>' % self.client_name
+
+
+class TicketComment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
+    ticket = db.relationship('Ticket', backref=db.backref('ticketComments', lazy='dynamic'))
+
+    details = db.Column(db.String(150))
+    created = db.Column(db.DateTime)
+    reporter = db.Column(db.String(80))
+
+    def __init__(self, details, created, reporter, ticket, ticket_id):
+        self.details = details
+        if created is None:
+            created = datetime.utcnow()
+
+        self.created = created
+        self.reporter = reporter
         self.ticket_id = ticket_id
         self.ticket = ticket
 
     def __repr__(self):
-        return '<Client %r>' % self.client_name
+        return '<Ticket Comment %r>' % self.client_name
+
+
+class OrderComment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
+    order = db.relationship('Order', backref=db.backref('orderComments', lazy='dynamic'))
+
+    details = db.Column(db.String(150))
+    created = db.Column(db.DateTime)
+    reporter = db.Column(db.String(80))
+
+    def __init__(self, details, created, reporter, order, order_id):
+        self.details = details
+        if created is None:
+            created = datetime.utcnow()
+
+        self.created = created
+        self.reporter = reporter
+        self.order_id = order_id
+        self.order = order
+
+    def __repr__(self):
+        return '<Order Comment %r>' % self.client_name
 
 
 class Garment(db.Model):
@@ -73,17 +119,41 @@ class Task(db.Model):
 
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
+    order = db.relationship('Order', backref=db.backref('tickets', lazy='dynamic'))
+
     status = db.Column(db.String(50))
     created = db.Column(db.DateTime)
-    comments = db.Column(db.Text())
+    description = db.Column(db.Text())
 
-    def __init__(self, status, comments, created=None):
+    def __init__(self, status, description, order, order_id, created=None):
         self.status = status
         if created is None:
             created = datetime.utcnow()
 
         self.created = created
-        self.comments = comments
+        self.description = description
+        self.order_id = order_id
+        self.order = order
+
+
+def __repr__(self):
+    return '<Ticket %r>' % self.id
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(50))
+    created = db.Column(db.DateTime)
+    description = db.Column(db.Text())
+
+    def __init__(self, status, description, created=None):
+        self.status = status
+        if created is None:
+            created = datetime.utcnow()
+
+        self.created = created
+        self.description = description
 
     def __repr__(self):
-        return '<Ticket %r>' % self.id
+        return '<Order %r>' % self.id

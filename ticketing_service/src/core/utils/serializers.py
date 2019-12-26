@@ -7,7 +7,7 @@ client = api.model('Client', {
     'client_name': fields.String(required=True, description='Client first name and last name'),
     'address': fields.String(required=True, description='Client address'),
     'client_type': fields.String(required=True, description='Type of client (Business/Personal)'),
-    'ticket_id': fields.Integer(attribute='ticket.id'),
+    'order_id': fields.Integer(attribute='order.id'),
 })
 
 garment = api.model('Garment', {
@@ -32,11 +32,23 @@ ticket = api.model('Ticket', {
     'id': fields.Integer(readOnly=True, description='The unique identifier of a ticket'),
     'status': fields.String(required=True, description='Status of the ticket'),
     'created': fields.DateTime(readOnly=True, description='Ticket creation timestamp'),
-    'comments': fields.String(required=True, description='Client for this ticket')
+    'description': fields.String(required=True, description='Description of this ticket'),
+    'order_id': fields.Integer(attribute='order.id')
+})
+
+order = api.model('Order', {
+    'id': fields.Integer(readOnly=True, description='The unique identifier of an order'),
+    'status': fields.String(required=True, description='Status of the order'),
+    'created': fields.DateTime(readOnly=True, description='Order creation timestamp'),
+    'description': fields.String(required=True, description='Description of this order')
+})
+
+order_detailed = api.inherit('Detailed Order', order, {
+    'clients': fields.List(fields.Nested(client)),
+    'tickets': fields.List(fields.Nested(ticket)),
 })
 
 ticket_detailed = api.inherit('Detailed Ticket', ticket, {
-    'clients': fields.List(fields.Nested(client)),
     'garments': fields.List(fields.Nested(garment)),
     'tasks': fields.List(fields.Nested(task))
 })

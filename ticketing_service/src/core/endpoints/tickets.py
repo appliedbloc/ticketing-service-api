@@ -5,9 +5,8 @@ from ticketing_service.src.core.helpers.client import *
 from ticketing_service.src.core.helpers.garment import *
 from ticketing_service.src.core.helpers.task import *
 from ticketing_service.src.core.helpers.ticket import *
-from ticketing_service.src.core.utils.serializers import client, garment, task, ticket, ticket_detailed
+from ticketing_service.src.core.utils.serializers import garment, task, ticket, ticket_detailed
 from ticketing_service.src.restplus import api
-from ticketing_service.database.models import Client, Garment, Task, Ticket
 
 log = logging.getLogger(__name__)
 
@@ -26,16 +25,6 @@ class TicketCollection(Resource):
 
         tickets = Ticket.query.all()
         return tickets
-
-    @api.response(201, 'Ticket successfully created.')
-    @api.expect(ticket)
-    def post(self):
-        """
-        Creates a new ticket.
-        """
-        data = request.json
-        create_ticket(data)
-        return 'Ticket successfully created.', 201
 
 
 @ns.route('/<int:id>')
@@ -97,33 +86,6 @@ class TicketTasksAddition(Resource):
         data = request.json
         add_task(id, data)
         return 'Task successfully added.', 201
-
-
-@ns.route('/<int:id>/client')
-@api.response(404, 'Ticket tasks not found.')
-class TicketClientCollection(Resource):
-
-    @api.marshal_with(client)
-    def get(self, id):
-        """
-        Retrieves a list of clients for the given ticket
-        """
-        return Client.query.filter(Client.ticket_id == id).all()
-
-
-@ns.route('/<int:id>/client/add')
-@api.response(500, 'Client addition failed.')
-class TicketClientAddition(Resource):
-
-    @api.response(201, 'Client successfully added.')
-    @api.expect(client)
-    def post(self, id):
-        """
-        Creates a new client and adds it to the given ticket
-        """
-        data = request.json
-        add_client(id, data)
-        return 'Client successfully added.', 201
 
 
 @ns.route('/<int:id>/garment')
