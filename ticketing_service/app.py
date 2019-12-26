@@ -4,9 +4,10 @@ import os
 from flask import Flask, Blueprint
 
 from ticketing_service import settings
+from ticketing_service.database import db
+from ticketing_service.src.core.endpoints.orders import ns as orders_namespace
 from ticketing_service.src.core.endpoints.tickets import ns as tickets_namespace
 from ticketing_service.src.restplus import api
-from ticketing_service.database import db
 
 app = Flask(__name__)
 logging_conf_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '../logging.conf'))
@@ -29,6 +30,7 @@ def initialize_app(flask_app):
 
     blueprint = Blueprint('api', __name__, url_prefix='/api')
     api.init_app(blueprint)
+    api.add_namespace(orders_namespace)
     api.add_namespace(tickets_namespace)
     flask_app.register_blueprint(blueprint)
 
@@ -40,7 +42,6 @@ def main():
     log.info('Starting development server at http://{}/api/'.format(app.config['SERVER_NAME']))
     app.run(debug=settings.FLASK_DEBUG)
     app.logger.setLevel(logging.INFO)
-
 
 
 if __name__ == "__main__":

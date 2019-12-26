@@ -1,12 +1,13 @@
 from ticketing_service.database import db
-from ticketing_service.database.models import Ticket
+from ticketing_service.database.models import Order, Ticket
 
 
-def create_ticket(data):
+def add_ticket(order_id, data):
     status = data.get('status')
-    comments = data.get('comments')
+    description = data.get('description')
 
-    ticket = Ticket(status, comments)
+    order = Order.query.filter(Order.id == order_id).one()
+    ticket = Ticket(status, description, order, order_id)
 
     db.session.add(ticket)
     db.session.commit()

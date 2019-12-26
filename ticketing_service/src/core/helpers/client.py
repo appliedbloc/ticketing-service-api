@@ -1,39 +1,39 @@
 import logging
 
 from ticketing_service.database import db
-from ticketing_service.database.models import Client, Ticket
+from ticketing_service.database.models import Order, Client
 
 log = logging.getLogger(__name__)
 
 
-def add_client(ticket_id, data):
+def add_client(order_id, data):
     client_name = data.get('client_name')
     address = data.get('address')
     client_type = data.get('client_type')
 
-    ticket = Ticket.query.filter(Ticket.id == ticket_id).one()
-    client = Client(client_name, address, client_type, ticket, ticket_id)
+    order = Order.query.filter(Order.id == order_id).one()
+    client = Client(client_name, address, client_type, order, order_id)
 
     db.session.add(client)
     db.session.commit()
 
 
-def update_client(ticket_id, data):
-    client = Client.query.filter(Client.ticket_id == ticket_id).one()
+def update_client(order_id, data):
+    client = Client.query.filter(Client.order_id == order_id).one()
 
     client.client_name = data.get('client_name')
     client.address = data.get('address')
     client.client_type = data.get('client_type')
 
-    ticket_id = data.get('ticket_id')
-    client.ticket = Ticket.query.filter(Ticket.id == ticket_id).one()
+    order_id = data.get('order_id')
+    client.order = Order.query.filter(Order.id == order_id).one()
 
     db.session.add(client)
     db.session.commit()
 
 
-def delete_client(ticket_id):
-    client = Client.query.filter(Client.ticket_id == ticket_id).one()
+def delete_client(order_id):
+    client = Client.query.filter(Client.order_id == order_id).one()
 
     db.session.delete(client)
     db.session.commit()
