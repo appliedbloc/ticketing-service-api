@@ -2,6 +2,7 @@
 # Flask settings
 FLASK_HOST = '0.0.0.0'
 FLASK_PORT = '8888'
+TESTING = False
 #FLASK_DEV_SERVER = '0.0.0.0:8888'
 #FLASK_DEBUG = True  # Do not use debug mode in production
 

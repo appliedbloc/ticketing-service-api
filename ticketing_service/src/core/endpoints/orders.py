@@ -1,4 +1,6 @@
+import flask_login
 from flask import request
+from flask_login import login_required
 from flask_restplus import Resource
 
 from ticketing_service.src.core.helpers.client import *
@@ -14,6 +16,7 @@ ns = api.namespace('orders', description='CRUD order operations')
 
 @ns.route('/')
 class OrderCollection(Resource):
+    method_decorators = [login_required]
 
     @api.marshal_list_with(order)
     def get(self):
@@ -27,6 +30,7 @@ class OrderCollection(Resource):
 
     @api.response(201, 'Order successfully created.')
     @api.expect(order)
+    @login_required
     def post(self):
         """
         Creates a new order.
@@ -39,6 +43,7 @@ class OrderCollection(Resource):
 @ns.route('/<int:id>')
 @api.response(404, 'Order not found.')
 class OrderItem(Resource):
+    method_decorators = [login_required]
 
     @api.marshal_with(order_detailed)
     def get(self, id):
@@ -51,6 +56,7 @@ class OrderItem(Resource):
 
     @api.expect(order)
     @api.response(204, 'Order successfully updated.')
+    @login_required
     def put(self, id):
         """
         Updates an order with a given id.
@@ -60,6 +66,7 @@ class OrderItem(Resource):
         return None, 204
 
     @api.response(204, 'Order successfully deleted.')
+    @login_required
     def delete(self, id):
         """
         Deletes an order with a given id.
@@ -71,6 +78,7 @@ class OrderItem(Resource):
 @ns.route('/<int:id>/tickets')
 @api.response(404, 'Ticket tasks not found.')
 class OrderTicketsCollection(Resource):
+    method_decorators = [login_required]
 
     @api.marshal_with(ticket)
     def get(self, id):
@@ -85,6 +93,7 @@ class OrderTicketsCollection(Resource):
 @ns.route('/<int:id>/tickets/add')
 @api.response(500, 'Ticket addition failed.')
 class OrderTicketsAddition(Resource):
+    method_decorators = [login_required]
 
     @api.response(201, 'Ticket successfully added.')
     @api.expect(ticket)
@@ -100,6 +109,7 @@ class OrderTicketsAddition(Resource):
 @ns.route('/<int:id>/client')
 @api.response(404, 'Order client not found.')
 class OrderClientCollection(Resource):
+    method_decorators = [login_required]
 
     @api.marshal_with(client)
     def get(self, id):
@@ -112,6 +122,7 @@ class OrderClientCollection(Resource):
 @ns.route('/<int:id>/client/add')
 @api.response(500, 'Client addition failed.')
 class OrderClientAddition(Resource):
+    method_decorators = [login_required]
 
     @api.response(201, 'Client successfully added.')
     @api.expect(client)

@@ -1,9 +1,55 @@
 from datetime import datetime
 
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from ticketing_service.database import db
 
 
+class User(UserMixin, db.Model):
+    """Model for user accounts."""
+
+    __tablename__ = 'flasklogin-users'
+
+    id = db.Column(db.Integer,
+                   primary_key=True)
+    name = db.Column(db.String,
+                     nullable=False,
+                     unique=False)
+    username = db.Column(db.String(40),
+                      unique=True,
+                      nullable=False)
+    password = db.Column(db.String(200),
+                         primary_key=False,
+                         unique=False,
+                         nullable=False)
+    email = db.Column(db.String(40),
+                      unique=True,
+                      nullable=False)
+    created_on = db.Column(db.DateTime,
+                           index=False,
+                           unique=False,
+                           nullable=True)
+    last_login = db.Column(db.DateTime,
+                           index=False,
+                           unique=False,
+                           nullable=True)
+
+    def set_password(self, password):
+        """Create hashed password."""
+        self.password = generate_password_hash(password, method='sha256')
+
+    def check_password(self, password):
+        """Check hashed password."""
+        return check_password_hash(self.password, password)
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+
 class Client(db.Model):
+    """Model for clients."""
+
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
     order = db.relationship('Order', backref=db.backref('clients', lazy='dynamic'))
@@ -24,6 +70,8 @@ class Client(db.Model):
 
 
 class TicketComment(db.Model):
+    """Model for ticket comments."""
+
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
     ticket = db.relationship('Ticket', backref=db.backref('ticketComments', lazy='dynamic'))
@@ -47,6 +95,8 @@ class TicketComment(db.Model):
 
 
 class OrderComment(db.Model):
+    """Model for order comments."""
+
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
     order = db.relationship('Order', backref=db.backref('orderComments', lazy='dynamic'))
@@ -70,6 +120,8 @@ class OrderComment(db.Model):
 
 
 class Garment(db.Model):
+    """Model for garments."""
+
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
     ticket = db.relationship('Ticket', backref=db.backref('garments', lazy='dynamic'))
@@ -92,6 +144,8 @@ class Garment(db.Model):
 
 
 class Task(db.Model):
+    """Model for tasks."""
+
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
     ticket = db.relationship('Ticket', backref=db.backref('tasks', lazy='dynamic'))
@@ -118,6 +172,8 @@ class Task(db.Model):
 
 
 class Ticket(db.Model):
+    """Model for tickets."""
+
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
     order = db.relationship('Order', backref=db.backref('tickets', lazy='dynamic'))
@@ -142,6 +198,8 @@ def __repr__(self):
 
 
 class Order(db.Model):
+    """Model for orders."""
+
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.String(50))
     created = db.Column(db.DateTime)

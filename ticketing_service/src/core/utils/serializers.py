@@ -53,6 +53,18 @@ ticket_detailed = api.inherit('Detailed Ticket', ticket, {
     'tasks': fields.List(fields.Nested(task))
 })
 
+login_form = api.model('Login form', {
+    'email': fields.String(required=True, description='Login email'),
+    'password': fields.String(required=True, description='Login password')
+})
+
+signup_form = api.model('Signup form', {
+    'name': fields.String(required=True, description='Signup name'),
+    'username': fields.String(required=True, description='Signup username'),
+    'password': fields.String(required=True, description='Signup password'),
+    'email': fields.String(required=True, description='Signup email')
+})
+
 pagination = api.model('A page of results', {
     'page': fields.Integer(description='Number of this page of results'),
     'pages': fields.Integer(description='Total number of pages of results'),
